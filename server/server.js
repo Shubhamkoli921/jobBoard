@@ -5,7 +5,7 @@ const app = Express()
 
 app.use(bodyParser.json())
 
-Mongoose.connect('mongodb://localhost:27017/shubham')
+Mongoose.connect('mongodb+srv://shubhamkk922:HWBIQBneTx4nfkTG@jobboard.ryppst8.mongodb.net/?retryWrites=true&w=majority&appName=JobBoard')
 .then(() => {
     console.log('Connected to MongoDB')
 }).catch((error) => {
