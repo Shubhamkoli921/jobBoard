@@ -1,32 +1,34 @@
-const Express = require('express')
-const bodyParser = require('body-parser')
-const Mongoose = require('mongoose')
-const app = Express()
+const express = require('express');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const app = express();
+const dotenv = require('dotenv');
+dotenv.config();
 
-app.use(bodyParser.json())
+const authenticateUser = require('./middlewares/userauthentication');
 
-Mongoose.connect('mongodb+srv://shubhamkk922:HWBIQBneTx4nfkTG@jobboard.ryppst8.mongodb.net/?retryWrites=true&w=majority&appName=JobBoard')
-.then(() => {
-    console.log('Connected to MongoDB')
-}).catch((error) => {
-    console.log("error connecting to MongoDB",error)
+app.use(bodyParser.json());
 
-})
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => {
+        console.log('Connected to MongoDB');
+    })
+    .catch((error) => {
+        console.log("error connecting to MongoDB", error);
+    });
 
-const jobroute = require('./routes/jobroute')
-app.use('/job',jobroute)
+const jobroute = require('./routes/jobroute');
+// const userroutes = require('./routes/userroutes');
+const signup = require('./routes/signup');
+const application = require('./routes/application');
+const login = require('./routes/login');
 
-const userroutes = require('./routes/userroutes')
-app.use('/login',userroutes)
+app.use('/job', authenticateUser, jobroute);
+app.use('/auth', login);
+app.use('/signup', signup);
+app.use('/job', authenticateUser, application);
 
-const signup = require('./routes/signup')
-app.use('/signup',signup)
-
-
-const application = require('./routes/application')
-app.use('/job',application)
-
-const PORT = 5000 || process.env.PORT;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });

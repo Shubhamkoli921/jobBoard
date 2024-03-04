@@ -8,6 +8,11 @@ const Signup = mongoose.Schema({
     password:{
         type:String,
         required:true
+    },
+    role:{
+        type:String,
+        enum:['recruiter','user'],
+        default:'user'
     }
 })
 

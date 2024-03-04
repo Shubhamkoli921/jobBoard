@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt')
 
     
 router.post('/', async (req,res) =>{
-    const {username,password} = req.body
+    const {username,password ,role} = req.body
 
     try {
         const existinguser= await signup.findOne({username})
@@ -17,7 +17,8 @@ router.post('/', async (req,res) =>{
         const hashPassword = await bcrypt.hash(password,10)
         const user = new signup({
             username,
-            password:hashPassword
+            password:hashPassword,
+            role
         })
 
         const result = await user.save()
@@ -28,6 +29,7 @@ router.post('/', async (req,res) =>{
     } catch (error) {
         res.status(400).json({message:error.message})
     }
+
 
 
 
