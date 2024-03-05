@@ -9,7 +9,7 @@ const authenticateUser = require('./middlewares/userauthentication');
 
 app.use(bodyParser.json());
 
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect('mongodb+srv://shubhamkk922:HWBIQBneTx4nfkTG@jobboard.ryppst8.mongodb.net/?retryWrites=true&w=majority&appName=JobBoard')
     .then(() => {
         console.log('Connected to MongoDB');
     })
