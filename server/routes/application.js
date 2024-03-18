@@ -3,19 +3,9 @@ const express = require('express');
 const router = express.Router();
 const Application = require('../models/applicant');
 const Job = require('../models/job');
-const fs = require('fs');
-
-// Define Multer storage options
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'uploads/'); // Destination folder for uploaded files
-    },
-    filename: function (req, file, cb) {
-        cb(null, file.originalname); // Keep original file name
-    }
-});
 
 // Multer upload configuration
+const storage = multer.memoryStorage(); // Store files in memory
 const upload = multer({ storage: storage });
 
 // POST route for applying to a job with resume and cover letter
@@ -52,22 +42,18 @@ router.post('/:jobId/apply', upload.fields([{ name: 'resume', maxCount: 1 }, { n
 
         // Process the application normally if everything is valid
 
-        const resumeData = {
-            data: fs.readFileSync(resumeFile.path),
-            contentType: 'application/pdf'
-        };
-
-        const coverLetterData = {
-            data: fs.readFileSync(coverLetterFile.path),
-            contentType: 'text/plain'
-        };
-
         const applicant = new Application({
             jobId,
             name,
             email,
-            resume: resumeData,
-            coverLetter: coverLetterData
+            resume: {
+                data: resumeFile.buffer, // Store file data in database
+                contentType: resumeFile.mimetype // Store content type
+            },
+            coverLetter: {
+                data: coverLetterFile.buffer, // Store file data in database
+                contentType: coverLetterFile.mimetype // Store content type
+            }
         });
 
         const savedApplicant = await applicant.save();
@@ -82,8 +68,5 @@ router.post('/:jobId/apply', upload.fields([{ name: 'resume', maxCount: 1 }, { n
         res.status(500).json({ message: "Error applying for job" });
     }
 });
-
-
-
 
 module.exports = router;
