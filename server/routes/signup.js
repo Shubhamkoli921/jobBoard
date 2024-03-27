@@ -5,7 +5,7 @@ const {json}= require('body-parser')
 const bcrypt = require('bcrypt')
 
     
-router.post('/', async (req,res) =>{
+router.post('/signup', async (req,res) =>{
     const {username,password ,role} = req.body
 
     try {
